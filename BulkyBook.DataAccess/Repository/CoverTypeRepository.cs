@@ -26,9 +26,9 @@ namespace BulkyBook.DataAccess.Repository
             return _db.Query<CoverType>("SELECT id, name FROM cover_type ORDER BY id DESC").ToList();
         }
 
-        public CoverType GetFirstOrDefault(Func<CoverType, bool> filter)
+        public CoverType GetFirstOrDefault(CoverType coverType)
         {
-            return _db.Query<CoverType>("SELECT id, name FROM cover_type").Where(filter).FirstOrDefault();
+            return _db.Query<CoverType>("SELECT id, name FROM cover_type" + coverType.ToWhereString(), coverType).FirstOrDefault();
         }
 
         public void Remove(CoverType obj)

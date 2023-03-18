@@ -17,7 +17,7 @@ namespace BulkyBookWeb.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly string? _dcs;
+        //private readonly string? _dcs;
         //private readonly ICategoryRepository _categoryRepository;
         private readonly IUnitOfWork _unitOfWork;
 
@@ -62,7 +62,15 @@ namespace BulkyBookWeb.Controllers
                 return NotFound();
             }
 
-            return View(_unitOfWork.Category.GetFirstOrDefault(x => x.Id.Equals(id)));
+            Category category = _unitOfWork.Category.GetFirstOrDefault(new Category() { Id = (int)id });
+
+            if (category == null)
+            {
+                TempData["success"] = "잘못된 경로로 접근했습니다.";
+                return RedirectToAction("Index");
+            }
+
+            return View(category);
         }
 
         // POST

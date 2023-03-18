@@ -6,6 +6,7 @@ using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
 using System.Linq.Expressions;
 using Dapper;
+using System.Text;
 
 namespace BulkyBook.DataAccess.Repository
 {
@@ -28,9 +29,10 @@ namespace BulkyBook.DataAccess.Repository
             return _db.Query<Category>("SELECT id, name, display_order, created_date_time FROM category ORDER BY id DESC").ToList();
         }
 
-        public Category GetFirstOrDefault(Func<Category, bool> filter)
+        public Category? GetFirstOrDefault(Category category)
         {
-            return _db.Query<Category>("SELECT id, name, display_order, created_date_time FROM category").Where(filter).FirstOrDefault();
+            string query = "SELECT * FROM category" + category.ToWhereString();
+            return _db.Query<Category>(query, category).FirstOrDefault();
         }
 
         public void Remove(Category entity)
