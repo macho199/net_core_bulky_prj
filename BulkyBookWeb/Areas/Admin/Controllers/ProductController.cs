@@ -23,6 +23,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
+            HttpContext.Session.SetString("tetxt", "hihi");
             return View(_unitOfWork.Product.GetAll());
         }
 

@@ -5,6 +5,7 @@ using BulkyBook.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using StackExchange.Redis;
 
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
@@ -20,6 +21,17 @@ builder.Services.AddSingleton(new NpgsqlConnection(builder.Configuration.GetConn
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Configure Redis Based Distributed Session
+builder.Services.AddStackExchangeRedisCache(redisCacheConfig =>
+{
+    redisCacheConfig.ConfigurationOptions = ConfigurationOptions.Parse(builder.Configuration.GetSection("Redis").Value);
+});
+
+builder.Services.AddSession(options => {
+    options.Cookie.Name = "myapp_session";
+    options.IdleTimeout = TimeSpan.FromMinutes(60 * 2);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,6 +46,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthorization();
 
