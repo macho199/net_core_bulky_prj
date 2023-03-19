@@ -40,7 +40,7 @@ namespace BulkyBook.Models
         {
             List<string> condition = new List<string>();
             if (Id > 0) condition.Add("id = @Id");
-            if (string.IsNullOrEmpty(Title)) condition.Add("title = @Title");
+            if (!string.IsNullOrEmpty(Title)) condition.Add("title = @Title");
 
             return (condition.Count() > 0 ? " WHERE " : "") + string.Join(" AND ", condition);
         }

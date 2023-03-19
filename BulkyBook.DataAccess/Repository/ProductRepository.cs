@@ -32,7 +32,7 @@ namespace BulkyBook.DataAccess.Repository
 
         public void Remove(Product entity)
         {
-            throw new NotImplementedException();
+            _db.Execute("DELETE FROM product" + entity.ToWhereString(), entity);
         }
 
         public void RemoveRange(IEnumerable<Product> entity)
@@ -42,7 +42,7 @@ namespace BulkyBook.DataAccess.Repository
 
         public void Update(Product obj)
         {
-            throw new NotImplementedException();
+            _db.Execute("UPDATE product SET title = @Title, description = @Description, isbn = @ISBN, author = @author, list_price = @ListPrice, price = @Price, price50 = @Price50, price100 = @Price100, image_url = @ImageUrl, category_id = @CategoryId, cover_type_id = @CoverTypeId WHERE id = @id", obj);
         }
     }
 }

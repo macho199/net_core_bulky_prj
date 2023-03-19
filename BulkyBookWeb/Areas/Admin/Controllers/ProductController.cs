@@ -63,22 +63,60 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 if (file != null)
                 {
                     string fileName = Guid.NewGuid().ToString();
-                    var uploads = Path.Combine(wwwRootPath, @"images/products");
+                    var uploads = Path.Combine(wwwRootPath, @"images" + Path.DirectorySeparatorChar + "products");
                     var extension = Path.GetExtension(file.FileName);
+
+                    if (!string.IsNullOrEmpty(obj.Product.ImageUrl))
+                    {
+                        string oldFilePath = Path.Combine(wwwRootPath, obj.Product.ImageUrl.TrimStart(Path.DirectorySeparatorChar));
+                        if (System.IO.File.Exists(oldFilePath))
+                        {
+                            System.IO.File.Delete(oldFilePath);
+                        }
+                    }
 
                     using (var fileStream = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
-                    obj.Product.ImageUrl = @"/images/products/" + fileName + extension;
+                    obj.Product.ImageUrl = Path.DirectorySeparatorChar + "images" + Path.DirectorySeparatorChar + "products" + Path.DirectorySeparatorChar + fileName + extension;
                 }
 
-                _unitOfWork.Product.Add(obj.Product);
-                
+                if (obj.Product.Id != 0)
+                {
+                    _unitOfWork.Product.Update(obj.Product);
+                }
+                else
+                {
+                    _unitOfWork.Product.Add(obj.Product);
+                }
 
                 return RedirectToAction("Index");
             }
             return View(obj);
+        }
+
+        public IActionResult Delete(Product product)
+        {
+            if (product.Id == 0)
+            {
+                return NotFound();
+            }
+
+            product = _unitOfWork.Product.GetFirstOrDefault(product);
+            if (!string.IsNullOrEmpty(product.ImageUrl))
+            {
+                string oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, product.ImageUrl.TrimStart(Path.DirectorySeparatorChar));
+                if (System.IO.File.Exists(oldFilePath))
+                {
+                    System.IO.File.Delete(oldFilePath);
+                }
+            }
+            
+            _unitOfWork.Product.Remove(product);
+
+            TempData["success"] = "삭제 완료!";
+            return RedirectToAction("Index");
         }
 
         #region API Call

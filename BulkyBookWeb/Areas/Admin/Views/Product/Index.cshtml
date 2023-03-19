@@ -28,6 +28,7 @@
                 <th>
                     Category
                 </th>
+                <th></th>
             </tr>
         </thead>
         
@@ -56,7 +57,17 @@
                     { "data": "isbn", "width": "15%" },
                     { "data": "price", "width": "15%" },
                     { "data": "author", "width": "15%" },
-                    { "data": "categoryName", "width": "15%" }
+                    { "data": "categoryName", "width": "15%" },
+                    {
+                        "data": "id",
+                        "render": function (data) {
+                            return `<div>
+                                <a href=\"/Admin/Product/Upsert?id=${data}\">수정</a>
+                                <a href=\"/Admin/Product/Delete/${data}\">삭제</a>
+                                </div>`;
+                        },
+                        "width": "15%"
+                    }
 
                 ]
             });
