@@ -14,8 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
-var conn = new NpgsqlConnection("Host=localhost;Uid=postgres;Pwd=1234;Database=bulky;");
-builder.Services.AddSingleton(conn);
+//var conn = new NpgsqlConnection("Host=localhost;Uid=postgres;Pwd=1234;Database=bulky;");
+builder.Services.AddSingleton(new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
